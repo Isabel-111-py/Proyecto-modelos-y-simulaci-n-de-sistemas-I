@@ -51,4 +51,3 @@ Macro F1:0.88
 * Precisión (Clase 1): 90%
 
 Resultado: El modelo demostró un equilibrio sólido entre precisión y sensibilidad, garantizando un bajo nivel de falsos negativos en la detección de patologías cardíacas.
-

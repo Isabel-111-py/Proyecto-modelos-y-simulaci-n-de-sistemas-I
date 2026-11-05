@@ -1,0 +1,55 @@
+{
+  "version": "v3",
+  "target_column": "HeartDisease",
+  "input_columns": [
+    "Age",
+    "RestingBP",
+    "Cholesterol",
+    "FastingBS",
+    "MaxHR",
+    "Oldpeak",
+    "Sex",
+    "ChestPainType",
+    "RestingECG",
+    "ExerciseAngina",
+    "ST_Slope"
+  ],
+  "categorical_columns": [
+    "Sex",
+    "ChestPainType",
+    "RestingECG",
+    "ExerciseAngina",
+    "ST_Slope"
+  ],
+  "numeric_columns": [
+    "Age",
+    "RestingBP",
+    "Cholesterol",
+    "FastingBS",
+    "MaxHR",
+    "Oldpeak"
+  ],
+  "zero_values_treated_as_missing": [
+    "Cholesterol",
+    "RestingBP"
+  ],
+  "split": {
+    "test_size": 0.2,
+    "random_state": 42,
+    "stratified": true
+  },
+  "test_rows": 184,
+  "metrics": {
+    "accuracy": 0.8641304347826086,
+    "macro_f1": 0.8623372736794852,
+    "precision_class_1": 0.8737864077669902,
+    "recall_class_1": 0.8823529411764706,
+    "majority_baseline_accuracy": 0.5543478260869565
+  },
+  "confusion_matrix": {
+    "tn": 69,
+    "fp": 13,
+    "fn": 12,
+    "tp": 90
+  }
+}
