@@ -3,3 +3,4 @@ scikit-learn==1.9.1
 xgboost-cpu==3.4.1
 joblib==1.5.3
 pytest==8.4.2
+numpy<2.5
