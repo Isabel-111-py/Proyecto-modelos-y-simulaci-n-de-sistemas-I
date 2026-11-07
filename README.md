@@ -1,53 +1,150 @@
-# Datset: Heart Failure Prediction
+# Heart Failure Prediction — Fase 2
 
-Durante la fase exploratoria inicial, se evaluó un dataset previo llamado academic performance, sin embargo, a la hora de aplicar diversos modelos como: Regresión logistica, random forest y XGBoost, sin embargo en todas alcanzaba un techo de varianza irreducible de un 60% de precisión. 
-De modo que llegamos a la conclusión de que el data set "academic performance" podría tener datos sesgados que le impiden al modelo aprender patrones suficiente para realizar una predicción precisa. 
+Aplicación reutilizable para entrenar y generar predicciones de enfermedad
+cardíaca desde la línea de comandos. El proyecto usa el dataset **Heart
+Failure Prediction** de 918 registros, con 11 predictores y `HeartDisease`
+como objetivo binario.
 
-Tras llegar a esta conclusión, decidimos seleccionar el Heart Failure Prediction Dataset, un conjunto de datos clínico con variables fisiológicas directas.
-Aunque, bien podriamos permanecer con el data "academic performance" y limitarnos a explicar porque falló en los tres intentos con diversos modelos, creemos que la idea de realizar este proyecto es poner a prueba un modelo que funcione, esa seria otra de las razones por la cuales cambiamos el data set.
+# Angel Simon Yepes Jaramillo
+# Juan Esteban Obando Soto
+# Maria Isabel Trejos Largo
 
-El dataset consta de 918 registros y 11 variables clínicas principales:
+## 1. Problema y variables
 
-1. Age (Numérica): Edad del paciente.
-2. Sex (Categórica): Género del paciente (M/F).
-3. hestPainType (Categórica): Tipo de dolor torácico (TA, ATA, NAP, ASY).
-4. RestingBP (Numérica): Presión arterial en reposo medida en mm Hg.
-5. Cholesterol (Numérica): Colesterol sérico medido en mm/dl.
-6. FastingBS (Binaria): Glucemia en ayunas (> 120 mg/dl).
-7. RestingECG (Categórica): Resultados del electrocardiograma en reposo.
-8. MaxHR (Numérica): Frecuencia cardíaca máxima alcanzada.
-9. ExerciseAngina (Categórica): Angina inducida por ejercicio (Y/N).
-10. Oldpeak (Numérica): Depresión del segmento ST provocada por el ejercicio.
-11. ST_Slope (Categórica): Pendiente del segmento ST en esfuerzo.
-12. Variable: HeartDisease (Binaria / Objetivo): Presencia de enfermedad cardíaca (1: Enfermedad, 0: Normal).
+El dataset **Heart Failure Prediction** contiene 918 registros y 11 variables
+clínicas. El objetivo `HeartDisease` es binario: `0` significa ausencia de
+enfermedad y `1` significa presencia de enfermedad.
 
-Metodología y Preprocesamiento:
+Los predictores son: `Age`, `Sex`, `ChestPainType`, `RestingBP`, `Cholesterol`,
+`FastingBS`, `RestingECG`, `MaxHR`, `ExerciseAngina`, `Oldpeak` y `ST_Slope`.
 
-1. Verificación de datos nulos: se aplico `df.isnull().sum()` para contabilizar la cantidad de celdas nulas, es decir celdas que hacen parte de un registro y que no tienen un valor registrado. Afortunadamente, el data set no tenia este tipo de valores. 
-2. Codificación Categórica: Se aplicó`pd.get_dummies` sobre las características cualitativas (`Sex`, `ChestPainType`, `RestingECG`, `ExerciseAngina`, `ST_Slope`).
-3. División de Datos: 80/20 para entrenamiento y prueba.
-4. Modelado: XGBoost (Nota: también probamos random forest, sin embargo, decidimos quedarnos con XGBoost, porque era mas preciso que el random forest)
+## 2. Exploración y preparación
 
-# Resultados del Modelado
+### Decisiones de datos
 
-Como fue mencionado anteriormente, experimentamos con dos modelos: Random forest y XGBoost ammbos modelos mostraron un resultado bastante preciso: 
+Las columnas categóricas son `Sex`, `ChestPainType`, `RestingECG`,
+`ExerciseAngina` y `ST_Slope`. `FastingBS=0` es un valor válido y se conserva.
+La fuente utiliza `0` como valor no informado para `Cholesterol` en 172 filas
+(18,7 %) y para `RestingBP` en una fila (0,11 %). Por eso la aplicación
+convierte únicamente esos ceros a `NaN` y realiza imputación por mediana dentro
+del pipeline, después de separar entrenamiento y prueba. Así se evita fuga de
+información.
 
-* Modelo: Random Forest
-Accuracy: 0.85
-F1-Score (Clase 0): 0.83
-F1-Score (Clase 1):0.87
-Macro F1: 0.85
+El pipeline persistido contiene, en un solo artefacto, la limpieza de ceros,
+imputación, codificación one-hot y clasificador XGBoost. Por tanto, `predict.py`
+recibe los 11 campos originales y no columnas codificadas manualmente.
 
-* Modelo: XGBoost
-Accuracy: 0.89
-F1-Score (Clase 0): 0.87
-F1-Score (Clase 1):0.90
-Macro F1:0.88
+## 3. Instalación local
 
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+```
 
-## Modelo eligido: XGBoost
-* Accuracy Global: 89%
-* Sensibilidad / Recall (Clase 1):89%
-* Precisión (Clase 1): 90%
+Si PowerShell permite activar el entorno:
 
-Resultado: El modelo demostró un equilibrio sólido entre precisión y sensibilidad, garantizando un bajo nivel de falsos negativos en la detección de patologías cardíacas.
+```powershell
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+```
+
+## 4. Pruebas
+
+```powershell
+python -m pytest -q
+```
+
+## 5. Entrenamiento y versionado
+
+El CSV debe llamarse, por ejemplo, `heart.csv` y contener las 11 variables más
+`HeartDisease`.
+
+```powershell
+python train.py --data heart.csv --version v3
+```
+
+Se generan:
+
+```text
+models/v3/model.pkl       # pipeline completo
+models/v3/metadata.json   # métricas, split, baseline y matriz de confusión
+```
+
+Cada versión se guarda en una carpeta diferente. No se debe sobrescribir una
+versión publicada; use `v3`, `v4`, etc. si cambia el tratamiento o el modelo.
+El script rechaza por defecto una versión existente; `--force` solo debe usarse
+para una corrección local consciente.
+
+La prueba usa `test_size=0.2`, `random_state=42` y estratificación. `metadata.json`
+registra accuracy, macro-F1, precisión/recall de la clase 1, matriz de
+confusión y la referencia de predecir siempre la clase mayoritaria.
+
+## 6. Predicción
+
+`pacientes.csv` debe contener solamente los 11 campos originales:
+
+```powershell
+python predict.py --data pacientes.csv --model models/v3/model.pkl --output predicciones.csv
+```
+
+La salida agrega `prediction` y, cuando está disponible, `probability`.
+
+## 7. Docker
+
+```powershell
+docker build -t heart-failure-model .
+docker run --rm `
+  -v "${PWD}:/app" `
+  heart-failure-model `
+  --data pacientes.csv `
+  --model models/v3/model.pkl `
+  --output predicciones-docker.csv
+```
+
+El smoke test de Docker automatiza la construcción, ejecución y validación de
+las columnas de salida:
+
+```powershell
+powershell -ExecutionPolicy Bypass `
+  -File .\scripts\docker_smoke_test.ps1
+```
+
+Para entrenar dentro del contenedor:
+
+```powershell
+docker run --rm `
+  -v "${PWD}:/app" `
+  --entrypoint python `
+  heart-failure-model train.py --data heart.csv --version v3
+```
+
+## 8. Resultados y diferencias frente a la Fase 1
+
+En la evaluación corregida de Fase 2 se obtuvieron estos resultados:
+
+| Modelo | Accuracy | Macro-F1 |
+|---|---:|---:|
+| Baseline mayoritario | 55,43 % | 35,66 % |
+| Random Forest | 85,87 % | 85,70 % |
+| XGBoost | 86,41 % | 86,23 % |
+
+La matriz de confusión de XGBoost fue:
+
+```text
+[[69, 13],
+ [12, 90]]
+```
+
+Es decir: TN=69, FP=13, FN=12 y TP=90.
+
+La comparación debe incluir una referencia simple: en la partición original,
+la clase mayoritaria acertó 102 de 184 casos (55,4 %). El resultado reportado
+para XGBoost fue 163/184 (88,6 %): 91 de 102 positivos detectados, 11 falsos
+negativos, y 10 falsos positivos entre 82 negativos. Estos números describen
+esa partición y no garantizan un bajo número de falsos negativos en nuevos
+datos.
+
+Random Forest y XGBoost deben entrenarse sobre los mismos pliegues estratificados
+y compararse con una métrica definida antes de mirar la prueba (por ejemplo,
+macro-F1). Si la elección original usó el conjunto de prueba, debe describirse
+como exploratoria.
