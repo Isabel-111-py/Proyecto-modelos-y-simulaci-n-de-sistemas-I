@@ -1,0 +1,17 @@
+# Levanta la API final (Fase 4: predicción + entrenamiento + monitoreo).
+# Para la API de la Fase 3 sola:  docker build -f fase-3/Dockerfile -t heart-disease-api:fase3 .
+services:
+  api:
+    build:
+      context: .
+      dockerfile: fase-4/Dockerfile
+    image: heart-disease-api:fase4
+    container_name: heart-disease-api
+    ports:
+      - "8000:8000"
+    volumes:
+      # Conservan las versiones del modelo y los registros de monitoreo en el equipo.
+      - ./models:/app/models
+      - ./fase-4/logs:/app/fase-4/logs
+      - ./fase-4/reports:/app/fase-4/reports
+    restart: unless-stopped

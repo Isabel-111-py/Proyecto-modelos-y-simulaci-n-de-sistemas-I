@@ -1,150 +1,117 @@
-# Heart Failure Prediction — Fase 2
+# Proyecto integrador: predicción de enfermedad cardíaca
 
-Aplicación reutilizable para entrenar y generar predicciones de enfermedad
-cardíaca desde la línea de comandos. El proyecto usa el dataset **Heart
-Failure Prediction** de 918 registros, con 11 predictores y `HeartDisease`
-como objetivo binario.
+Modelos y Simulación de Sistemas I. Prototipo reproducible que lleva un modelo de Machine Learning desde un
+notebook hasta una API REST contenerizada con monitoreo básico.
 
-# Angel Simon Yepes Jaramillo
-# Juan Esteban Obando Soto
-# Maria Isabel Trejos Largo
+> Prototipo académico. No es un dispositivo médico ni debe usarse para decisiones clínicas.
 
-## 1. Problema y variables
+**Equipo:** _[Integrante 1], [Integrante 2], [Integrante 3 (si aplica)]_ <!-- completar -->
 
-El dataset **Heart Failure Prediction** contiene 918 registros y 11 variables
-clínicas. El objetivo `HeartDisease` es binario: `0` significa ausencia de
-enfermedad y `1` significa presencia de enfermedad.
+## Problema y datos
 
-Los predictores son: `Age`, `Sex`, `ChestPainType`, `RestingBP`, `Cholesterol`,
-`FastingBS`, `RestingECG`, `MaxHR`, `ExerciseAngina`, `Oldpeak` y `ST_Slope`.
+- **Dataset:** [Heart Failure Prediction](https://www.kaggle.com/datasets/fedesoriano/heart-failure-prediction) (Kaggle). El docente autorizó su uso para el proyecto.
+- **Tarea:** clasificación binaria. Variable objetivo `HeartDisease` (1 = enfermedad cardíaca, 0 = normal).
+- **Tamaño:** 918 registros y 11 variables predictoras (6 numéricas y 5 categóricas). No es una serie de tiempo.
+- **Valores faltantes:** el dataset no trae celdas nulas, pero `Cholesterol` tiene 172 ceros y `RestingBP` tiene 1, que no son
+  mediciones válidas. Se convierten en `NaN` y se imputan con la mediana dentro del `Pipeline` (solo con datos de entrenamiento).
+- **Datos:** ver [data/README.md](data/README.md) (el CSV se descarga con `scripts/download_data.py`).
 
-## 2. Exploración y preparación
+## Cumplimiento de los requisitos del dataset
 
-### Decisiones de datos
+Comparación con la sección 4 de la guía del proyecto (cifras calculadas sobre `heart.csv`):
 
-Las columnas categóricas son `Sex`, `ChestPainType`, `RestingECG`,
-`ExerciseAngina` y `ST_Slope`. `FastingBS=0` es un valor válido y se conserva.
-La fuente utiliza `0` como valor no informado para `Cholesterol` en 172 filas
-(18,7 %) y para `RestingBP` en una fila (0,11 %). Por eso la aplicación
-convierte únicamente esos ceros a `NaN` y realiza imputación por mediana dentro
-del pipeline, después de separar entrenamiento y prueba. Así se evita fuga de
-información.
+| Requisito de la guía | Estado | Detalle |
+|---|---|---|
+| Competición/dataset de Kaggle | Cumple | Heart Failure Prediction (Kaggle) |
+| Variable objetivo claramente definida | Cumple | `HeartDisease` (0/1) |
+| Clasificación o regresión | Cumple | Clasificación binaria |
+| Al menos 5 variables predictoras | Cumple | 11 (6 numéricas, 5 categóricas) |
+| No es una serie de tiempo | Cumple | Cada fila es un paciente independiente |
+| Se procesa en un computador personal | Cumple | 918 filas; el entrenamiento tarda segundos |
+| Al menos 1.000 observaciones | **No cumple (918)** | Excepción, ver nota |
+| Nulos del 0.1 % al 2 % en alguna predictora | **Cumple solo parcialmente** | No hay celdas vacías. Al tratar los ceros inválidos como faltantes, `RestingBP` tiene 1 de 918 (0.11 %, dentro del rango) y `Cholesterol` tiene 172 de 918 (18.7 %, fuera del rango). Ver nota |
 
-El pipeline persistido contiene, en un solo artefacto, la limpieza de ceros,
-imputación, codificación one-hot y clasificador XGBoost. Por tanto, `predict.py`
-recibe los 11 campos originales y no columnas codificadas manualmente.
+**Nota sobre las excepciones.** El dataset original del equipo (rendimiento académico) se descartó porque ningún modelo superó
+aproximadamente 60 % de accuracy (ver [fase-1](fase-1/README.md)). Se cambió a Heart Failure Prediction con autorización del
+docente. Las dos diferencias frente a la guía (918 observaciones en lugar de 1.000 y la forma de los valores faltantes) se
+declaran aquí de forma explícita. Evidencia de la autorización: _[fecha y asunto del correo del docente — completar]_.
 
-## 3. Instalación local
+## Estructura del repositorio
 
-```powershell
+Cada fase conserva y amplía el trabajo de la anterior: la Fase 3 importa el código de la Fase 2 y la Fase 4 amplía la API de la Fase 3.
+
+```
+fase-1/   Modelo_Fase_1.ipynb, modelo_xgboost.pkl, README.md          Modelo predictivo
+fase-2/   preprocessing.py, train.py, predict.py, model_registry.py,   Scripts y Docker
+          Dockerfile, Modelo_Fase_2.ipynb, tests/, README.md
+fase-3/   main.py, schemas.py, client.py, Dockerfile, tests/, README.md   API REST
+fase-4/   monitoring.py, monitor.py, monitored_api.py, policy.md,        Monitoreo
+          Dockerfile, reports/, logs/, tests/, README.md
+models/   v3/ (model.pkl + metadata.json) y current_model.txt (versión activa)
+data/     sample_patients.csv (y heart.csv, ver data/README.md)
+scripts/  download_data.py, simulate_traffic.py, generate_report.py, docker_smoke_test.{sh,ps1}
+compose.yaml, requirements.txt, pytest.ini
+```
+
+## Inicio rápido
+
+```bash
 python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+source .venv/bin/activate          # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+pip install -r requirements-notebooks.txt                   # solo para los notebooks y la descarga de datos
+python scripts/download_data.py                             # crea data/heart.csv
+python -m pytest                                            # pruebas de las fases 2, 3 y 4
 ```
 
-Si PowerShell permite activar el entorno:
+| Quiero... | Comando | Detalle |
+|---|---|---|
+| Ver la exploración y el modelo | abrir `fase-1/Modelo_Fase_1.ipynb` y `fase-2/Modelo_Fase_2.ipynb` | [fase-1](fase-1/README.md), [fase-2](fase-2/README.md) |
+| Entrenar una versión nueva | `python fase-2/train.py --data data/heart.csv --version v4` | [fase-2](fase-2/README.md) |
+| Predecir desde la terminal | `python fase-2/predict.py --data data/sample_patients.csv` | [fase-2](fase-2/README.md) |
+| Levantar la API (con monitoreo) | `docker compose up --build -d` y abrir <http://localhost:8000/docs> | [fase-3](fase-3/README.md), [fase-4](fase-4/README.md) |
+| Probar la API | `python fase-3/client.py` | [fase-3](fase-3/README.md) |
+| Generar el reporte de monitoreo (con tráfico sintético, sin Docker) | `python scripts/generate_report.py` | [fase-4](fase-4/README.md) |
+| Generar el reporte con el registro actual | `python fase-4/monitor.py --reference data/heart.csv` | [fase-4](fase-4/README.md) |
 
-```powershell
-.\.venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt
-```
+## Resultados
 
-## 4. Pruebas
+El modelo desplegado es **v3**: el pipeline de la Fase 2 (imputación y codificación dentro del `Pipeline`, XGBoost).
+Todas las cifras se calculan sobre una única partición estratificada 80/20 (`random_state=42`, 184 pacientes de prueba).
 
-```powershell
-python -m pytest -q
-```
+| Modelo | Accuracy | Macro-F1 | Notas |
+|---|---|---|---|
+| Referencia (siempre la clase mayoritaria) | 0.5543 | 0.3566 | Fase 2 |
+| Random Forest (Fase 2) | 0.8587 | 0.8570 | |
+| **XGBoost v3 (Fase 2, desplegado)** | **0.8641** | **0.8623** | Precisión clase 1: 0.8738. Recall clase 1: 0.8824. TN=69, FP=13, FN=12, TP=90 |
+| XGBoost (Fase 1, sin tratar ceros) | 0.8859 | 0.88 | TN=72, FP=10, FN=11, TP=91. No es el modelo desplegado |
 
-## 5. Entrenamiento y versionado
+La diferencia entre la Fase 1 y la Fase 2 son 4 aciertos de 184 pacientes. Con una sola partición no es una diferencia
+concluyente; se adoptó la Fase 2 porque trata los ceros inválidos y evita ajustar el preprocesamiento con datos de prueba.
+El objetivo del curso no es el mejor modelo, sino un proceso reproducible.
 
-El CSV debe llamarse, por ejemplo, `heart.csv` y contener las 11 variables más
-`HeartDisease`.
+## Cumplimiento de la guía
 
-```powershell
-python train.py --data heart.csv --version v3
-```
+| Fase | Entregable | Dónde |
+|---|---|---|
+| 1 | Notebook ejecutable, modelo almacenado, README | `fase-1/` |
+| 2 | `train.py`, `predict.py`, Dockerfile, versionado del modelo, pruebas con pytest, README | `fase-2/`, `models/` |
+| 3 | API REST (`/health`, `/predict`, `/train`), validación de entradas, errores, pruebas, Dockerfile, cliente de prueba, README | `fase-3/` |
+| 4 | Registro de predicciones, métricas, versiones del modelo, script de monitoreo, reporte, política de reentrenamiento | `fase-4/` |
 
-Se generan:
+## Flujo de trabajo en GitHub
 
-```text
-models/v3/model.pkl       # pipeline completo
-models/v3/metadata.json   # métricas, split, baseline y matriz de confusión
-```
+Un único repositorio por equipo. Ramas `main` (entregas), `develop` (integración) y `feature/<tema>` (trabajo de cada integrante).
+Cada integrante abre al menos un Pull Request hacia `develop`, y `develop` se fusiona a `main` en cada entrega.
 
-Cada versión se guarda en una carpeta diferente. No se debe sobrescribir una
-versión publicada; use `v3`, `v4`, etc. si cambia el tratamiento o el modelo.
-El script rechaza por defecto una versión existente; `--force` solo debe usarse
-para una corrección local consciente.
+| Integrante | Contribuciones principales | Pull Requests |
+|---|---|---|
+| _[Integrante 1]_ | _completar_ | _#_ |
+| _[Integrante 2]_ | _completar_ | _#_ |
 
-La prueba usa `test_size=0.2`, `random_state=42` y estratificación. `metadata.json`
-registra accuracy, macro-F1, precisión/recall de la clase 1, matriz de
-confusión y la referencia de predecir siempre la clase mayoritaria.
+## Limitaciones conocidas
 
-## 6. Predicción
-
-`pacientes.csv` debe contener solamente los 11 campos originales:
-
-```powershell
-python predict.py --data pacientes.csv --model models/v3/model.pkl --output predicciones.csv
-```
-
-La salida agrega `prediction` y, cuando está disponible, `probability`.
-
-## 7. Docker
-
-```powershell
-docker build -t heart-failure-model .
-docker run --rm `
-  -v "${PWD}:/app" `
-  heart-failure-model `
-  --data pacientes.csv `
-  --model models/v3/model.pkl `
-  --output predicciones-docker.csv
-```
-
-El smoke test de Docker automatiza la construcción, ejecución y validación de
-las columnas de salida:
-
-```powershell
-powershell -ExecutionPolicy Bypass `
-  -File .\scripts\docker_smoke_test.ps1
-```
-
-Para entrenar dentro del contenedor:
-
-```powershell
-docker run --rm `
-  -v "${PWD}:/app" `
-  --entrypoint python `
-  heart-failure-model train.py --data heart.csv --version v3
-```
-
-## 8. Resultados y diferencias frente a la Fase 1
-
-En la evaluación corregida de Fase 2 se obtuvieron estos resultados:
-
-| Modelo | Accuracy | Macro-F1 |
-|---|---:|---:|
-| Baseline mayoritario | 55,43 % | 35,66 % |
-| Random Forest | 85,87 % | 85,70 % |
-| XGBoost | 86,41 % | 86,23 % |
-
-La matriz de confusión de XGBoost fue:
-
-```text
-[[69, 13],
- [12, 90]]
-```
-
-Es decir: TN=69, FP=13, FN=12 y TP=90.
-
-La comparación debe incluir una referencia simple: en la partición original,
-la clase mayoritaria acertó 102 de 184 casos (55,4 %). El resultado reportado
-para XGBoost fue 163/184 (88,6 %): 91 de 102 positivos detectados, 11 falsos
-negativos, y 10 falsos positivos entre 82 negativos. Estos números describen
-esa partición y no garantizan un bajo número de falsos negativos en nuevos
-datos.
-
-Random Forest y XGBoost deben entrenarse sobre los mismos pliegues estratificados
-y compararse con una métrica definida antes de mirar la prueba (por ejemplo,
-macro-F1). Si la elección original usó el conjunto de prueba, debe describirse
-como exploratoria.
+- Evaluación sobre una sola partición de 184 registros: es exploratoria y no garantiza el desempeño con pacientes nuevos.
+- El monitoreo en producción mide uso, latencia y cambios en la distribución de las entradas. No mide accuracy real porque no
+  se dispone de la etiqueta verdadera de cada paciente.
+- `POST /train` entrena únicamente con los datos que recibe y no tiene autenticación (suficiente para un prototipo académico).

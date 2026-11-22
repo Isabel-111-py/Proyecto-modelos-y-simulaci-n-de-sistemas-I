@@ -1,0 +1,115 @@
+{
+  "version": "v4",
+  "trained_at": "2026-11-22T03:49:24.297994+00:00",
+  "target_column": "HeartDisease",
+  "input_columns": [
+    "Age",
+    "RestingBP",
+    "Cholesterol",
+    "FastingBS",
+    "MaxHR",
+    "Oldpeak",
+    "Sex",
+    "ChestPainType",
+    "RestingECG",
+    "ExerciseAngina",
+    "ST_Slope"
+  ],
+  "categorical_columns": [
+    "Sex",
+    "ChestPainType",
+    "RestingECG",
+    "ExerciseAngina",
+    "ST_Slope"
+  ],
+  "numeric_columns": [
+    "Age",
+    "RestingBP",
+    "Cholesterol",
+    "FastingBS",
+    "MaxHR",
+    "Oldpeak"
+  ],
+  "zero_values_treated_as_missing": [
+    "Cholesterol",
+    "RestingBP"
+  ],
+  "split": {
+    "test_size": 0.2,
+    "random_state": 42,
+    "stratified": true
+  },
+  "training_rows": 734,
+  "test_rows": 184,
+  "library_versions": {
+    "scikit-learn": "1.9.0",
+    "xgboost": "3.4.1"
+  },
+  "metrics": {
+    "accuracy": 0.8641304347826086,
+    "macro_f1": 0.8623372736794852,
+    "precision_class_1": 0.8737864077669902,
+    "recall_class_1": 0.8823529411764706,
+    "majority_baseline_accuracy": 0.5543478260869565
+  },
+  "confusion_matrix": {
+    "tn": 69,
+    "fp": 13,
+    "fn": 12,
+    "tp": 90
+  },
+  "reference_stats": {
+    "numeric": {
+      "Age": {
+        "mean": 53.84877384196185,
+        "std": 9.43414098939104
+      },
+      "RestingBP": {
+        "mean": 132.87465940054497,
+        "std": 18.06800914833354
+      },
+      "Cholesterol": {
+        "mean": 246.5603305785124,
+        "std": 59.60721360657873
+      },
+      "FastingBS": {
+        "mean": 0.22888283378746593,
+        "std": 0.42011365389009336
+      },
+      "MaxHR": {
+        "mean": 136.3773841961853,
+        "std": 25.81469451887964
+      },
+      "Oldpeak": {
+        "mean": 0.8651226158038147,
+        "std": 1.0562433683035626
+      }
+    },
+    "categorical": {
+      "Sex": {
+        "M": 0.7888283378746594,
+        "F": 0.2111716621253406
+      },
+      "ChestPainType": {
+        "ASY": 0.5490463215258855,
+        "NAP": 0.2111716621253406,
+        "ATA": 0.18528610354223432,
+        "TA": 0.05449591280653951
+      },
+      "RestingECG": {
+        "Normal": 0.6089918256130791,
+        "LVH": 0.1989100817438692,
+        "ST": 0.19209809264305178
+      },
+      "ExerciseAngina": {
+        "N": 0.5912806539509536,
+        "Y": 0.4087193460490463
+      },
+      "ST_Slope": {
+        "Flat": 0.5095367847411444,
+        "Up": 0.4264305177111717,
+        "Down": 0.06403269754768393
+      }
+    }
+  }
+}

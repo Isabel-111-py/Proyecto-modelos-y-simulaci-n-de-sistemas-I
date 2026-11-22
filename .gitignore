@@ -2,5 +2,9 @@
 __pycache__/
 .pytest_cache/
 *.pyc
-predicciones*.csv
 *.log
+.env
+predicciones*.csv
+
+# Registro de predicciones en ejecución (contiene datos de entrada)
+fase-4/logs/*.csv

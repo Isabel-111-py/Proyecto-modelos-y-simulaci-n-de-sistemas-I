@@ -1,0 +1,128 @@
+{
+  "generated_at": "2026-11-21T23:45:28.580504+00:00",
+  "active_model_version": "v3",
+  "metrics": {
+    "total_predictions": 60,
+    "predictions_by_class": {
+      "0": 19,
+      "1": 41
+    },
+    "positive_rate": 0.6833,
+    "average_probability": 0.6216,
+    "predictions_by_model_version": {
+      "v3": 60
+    },
+    "average_latency_ms": 75.5384,
+    "latency_p95_ms": 144.32,
+    "first_prediction_at": "2026-11-21T23:45:22.133422+00:00",
+    "last_prediction_at": "2026-11-21T23:45:28.464998+00:00"
+  },
+  "drift": {
+    "reference_source": "CSV: C:\\Modelos_I\\modelosentrega3\\Proyecto-corregido-v3\\Proyecto-modelos-y-simulaci-n-de-sistemas-I\\data\\heart.csv",
+    "status": "estable",
+    "rows": 60,
+    "features": {
+      "Age": {
+        "type": "numeric",
+        "reference_mean": 53.5109,
+        "live_mean": 54.2333,
+        "shift_in_std": 0.0766,
+        "drift": false
+      },
+      "RestingBP": {
+        "type": "numeric",
+        "reference_mean": 132.5409,
+        "live_mean": 133.7,
+        "shift_in_std": 0.0644,
+        "drift": false
+      },
+      "Cholesterol": {
+        "type": "numeric",
+        "reference_mean": 244.6354,
+        "live_mean": 239.6538,
+        "shift_in_std": 0.0843,
+        "drift": false
+      },
+      "FastingBS": {
+        "type": "numeric",
+        "reference_mean": 0.2331,
+        "live_mean": 0.2,
+        "shift_in_std": 0.0783,
+        "drift": false
+      },
+      "MaxHR": {
+        "type": "numeric",
+        "reference_mean": 136.8094,
+        "live_mean": 137.3333,
+        "shift_in_std": 0.0206,
+        "drift": false
+      },
+      "Oldpeak": {
+        "type": "numeric",
+        "reference_mean": 0.8874,
+        "live_mean": 0.955,
+        "shift_in_std": 0.0634,
+        "drift": false
+      },
+      "Sex": {
+        "type": "categorical",
+        "max_proportion_change": 0.0269,
+        "category": "F",
+        "drift": false
+      },
+      "ChestPainType": {
+        "type": "categorical",
+        "max_proportion_change": 0.0264,
+        "category": "ASY",
+        "drift": false
+      },
+      "RestingECG": {
+        "type": "categorical",
+        "max_proportion_change": 0.168,
+        "category": "Normal",
+        "drift": false
+      },
+      "ExerciseAngina": {
+        "type": "categorical",
+        "max_proportion_change": 0.0041,
+        "category": "N",
+        "drift": false
+      },
+      "ST_Slope": {
+        "type": "categorical",
+        "max_proportion_change": 0.0303,
+        "category": "Up",
+        "drift": false
+      }
+    },
+    "drifted_features": []
+  },
+  "retraining": {
+    "evaluate_retraining": false,
+    "reasons": [],
+    "manual_criteria": [
+      "Acumular al menos 100 registros nuevos con etiqueta real verificada.",
+      "Caída de 5 puntos porcentuales o más en accuracy o macro-F1 con datos etiquetados recientes."
+    ]
+  },
+  "model_versions": [
+    {
+      "version": "v3",
+      "active": true,
+      "trained_at": null,
+      "training_rows": null,
+      "metrics": {
+        "accuracy": 0.8641304347826086,
+        "macro_f1": 0.8623372736794852,
+        "precision_class_1": 0.8737864077669902,
+        "recall_class_1": 0.8823529411764706,
+        "majority_baseline_accuracy": 0.5543478260869565
+      }
+    }
+  ],
+  "notes": [
+    "Las métricas describen el uso y el tiempo de respuesta de la API.",
+    "Sin etiquetas reales posteriores no es posible calcular accuracy, precision o recall en producción.",
+    "Reporte generado con tráfico sintético (scripts/simulate_traffic.py): las entradas son valores al azar en rangos plausibles, no pacientes reales. Las predicciones sí provienen del modelo activo."
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "generated_at": "2026-11-22T04:25:12.534834+00:00",
+  "active_model_version": "v4",
+  "metrics": {
+    "total_requests": 6,
+    "failed_requests": 3,
+    "failure_rate": 0.5,
+    "total_predictions": 3,
+    "predictions_by_class": {
+      "0": 3,
+      "1": 0
+    },
+    "positive_rate": 0.0,
+    "average_probability": 0.0242,
+    "predictions_by_model_version": {
+      "v4": 3,
+      "": 3
+    },
+    "average_latency_ms": 20.3494,
+    "latency_p95_ms": 50.1614,
+    "first_prediction_at": "2026-11-22T04:09:43.353154+00:00",
+    "last_prediction_at": "2026-11-22T04:24:41.075112+00:00"
+  },
+  "drift": {
+    "reference_source": "CSV: data\\heart.csv",
+    "status": "datos_insuficientes",
+    "rows": 6,
+    "min_rows": 30,
+    "features": {},
+    "drifted_features": []
+  },
+  "retraining": {
+    "evaluate_retraining": false,
+    "reasons": [],
+    "manual_criteria": [
+      "Acumular al menos 100 registros nuevos con etiqueta real verificada.",
+      "Caída de 5 puntos porcentuales o más en accuracy o macro-F1 con datos etiquetados recientes."
+    ]
+  },
+  "model_versions": [
+    {
+      "version": "v3",
+      "active": false,
+      "trained_at": null,
+      "training_rows": null,
+      "metrics": {
+        "accuracy": 0.8641304347826086,
+        "macro_f1": 0.8623372736794852,
+        "precision_class_1": 0.8737864077669902,
+        "recall_class_1": 0.8823529411764706,
+        "majority_baseline_accuracy": 0.5543478260869565
+      }
+    },
+    {
+      "version": "v4",
+      "active": true,
+      "trained_at": "2026-11-22T03:49:24.297994+00:00",
+      "training_rows": 734,
+      "metrics": {
+        "accuracy": 0.8641304347826086,
+        "macro_f1": 0.8623372736794852,
+        "precision_class_1": 0.8737864077669902,
+        "recall_class_1": 0.8823529411764706,
+        "majority_baseline_accuracy": 0.5543478260869565
+      }
+    }
+  ],
+  "notes": [
+    "Las métricas describen el uso y el tiempo de respuesta de la API.",
+    "Sin etiquetas reales posteriores no es posible calcular accuracy, precision o recall en producción."
+  ]
+}
