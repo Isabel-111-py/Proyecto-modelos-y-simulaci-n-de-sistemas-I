@@ -94,29 +94,3 @@ Todas las cifras se calculan sobre una única partición estratificada 80/20 (`r
 La diferencia entre la Fase 1 y la Fase 2 son 4 aciertos de 184 pacientes. Con una sola partición no es una diferencia
 concluyente; se adoptó la Fase 2 porque trata los ceros inválidos y evita ajustar el preprocesamiento con datos de prueba.
 El objetivo del curso no es el mejor modelo, sino un proceso reproducible.
-
-## Cumplimiento de la guía
-
-| Fase | Entregable | Dónde |
-|---|---|---|
-| 1 | Notebook ejecutable, modelo almacenado, README | `fase-1/` |
-| 2 | `train.py`, `predict.py`, Dockerfile, versionado del modelo, pruebas con pytest, README | `fase-2/`, `models/` |
-| 3 | API REST (`/health`, `/predict`, `/train`), validación de entradas, errores, pruebas, Dockerfile, cliente de prueba, README | `fase-3/` |
-| 4 | Registro de predicciones, métricas, versiones del modelo, script de monitoreo, reporte, política de reentrenamiento | `fase-4/` |
-
-## Flujo de trabajo en GitHub
-
-Un único repositorio por equipo. Ramas `main` (entregas), `develop` (integración) y `feature/<tema>` (trabajo de cada integrante).
-Cada integrante abre al menos un Pull Request hacia `develop`, y `develop` se fusiona a `main` en cada entrega.
-
-| Integrante | Contribuciones principales | Pull Requests |
-|---|---|---|
-| _[Integrante 1]_ | _completar_ | _#_ |
-| _[Integrante 2]_ | _completar_ | _#_ |
-
-## Limitaciones conocidas
-
-- Evaluación sobre una sola partición de 184 registros: es exploratoria y no garantiza el desempeño con pacientes nuevos.
-- El monitoreo en producción mide uso, latencia y cambios en la distribución de las entradas. No mide accuracy real porque no
-  se dispone de la etiqueta verdadera de cada paciente.
-- `POST /train` entrena únicamente con los datos que recibe y no tiene autenticación (suficiente para un prototipo académico).
