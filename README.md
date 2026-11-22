@@ -5,7 +5,12 @@ notebook hasta una API REST contenerizada con monitoreo básico.
 
 > Prototipo académico. No es un dispositivo médico ni debe usarse para decisiones clínicas.
 
-**Equipo:** _[Integrante 1], [Integrante 2], [Integrante 3 (si aplica)]_ <!-- completar -->
+
+# Maria Isabel Trejos Largo
+# Juan Esteban Obando Soto
+# Angel Simon Yepes Jaramillo
+
+
 
 ## Problema y datos
 
